@@ -35,7 +35,7 @@ def neg(x):
     ":math:`f(x) = -x`"
     # TODO: Implement for Task 0.1.
     # raise NotImplementedError('Need to implement for Task 0.1')
-    return -x
+    return float(-x)
 
 
 def lt(x, y):
@@ -107,7 +107,7 @@ def relu(x):
     """
     # TODO: Implement for Task 0.1.
     # raise NotImplementedError('Need to implement for Task 0.1')
-    return x if x > 0 else 0
+    return x if x > 0 else 0.
 
 
 EPS = 1e-6
@@ -148,7 +148,7 @@ def relu_back(x, d):
     r"If :math:`f = relu` compute :math:`d \times f'(x)`"
     # TODO: Implement for Task 0.1.
     # raise NotImplementedError('Need to implement for Task 0.1')
-    return d if x > 0 else 0
+    return d if x > 0 else 0.
 
 
 # ## Task 0.3
