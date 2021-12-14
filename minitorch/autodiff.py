@@ -289,6 +289,7 @@ class FunctionBase:
                 back.append((arg, deriv))
         return back
 
+
 # Algorithms for backpropagation
 
 
@@ -328,7 +329,7 @@ def topological_sort(variable):
         temporary_mark.remove(variable.unique_id)
         permanent_mark.add(variable.unique_id)
         topo_list.append(variable)
-    
+
     visit(variable)
     topo_list.reverse()
     return topo_list
@@ -360,5 +361,5 @@ def backpropagate(variable, deriv):
             back = node.history.backprop_step(d_output)
             for v, d in back:
                 if v.unique_id not in intermediate_var_deriv:
-                    intermediate_var_deriv[v.unique_id] = 0.
+                    intermediate_var_deriv[v.unique_id] = 0.0
                 intermediate_var_deriv[v.unique_id] += d
