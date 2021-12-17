@@ -361,5 +361,6 @@ def backpropagate(variable, deriv):
             back = node.history.backprop_step(d_output)
             for v, d in back:
                 if v.unique_id not in intermediate_var_deriv:
-                    intermediate_var_deriv[v.unique_id] = 0.0
-                intermediate_var_deriv[v.unique_id] += d
+                    intermediate_var_deriv[v.unique_id] = d
+                else:
+                    intermediate_var_deriv[v.unique_id] += d
