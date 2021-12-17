@@ -109,8 +109,7 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
                 # TODO: Implement for Task 2.4.
                 # raise NotImplementedError('Need to implement for Task 2.4')
                 a, b = ctx.saved_values
-                return a.expand(mul_zip(b, grad_output)), \
-                       b.expand(mul_zip(a, grad_output))
+                return a.expand(mul_zip(b, grad_output)), b.expand(mul_zip(a, grad_output))
 
         class Sigmoid(Function):
             @staticmethod
