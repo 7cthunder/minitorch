@@ -1,7 +1,9 @@
+from os import times
 import minitorch
 import datasets
 import numba
 import random
+import time
 
 FastTensorBackend = minitorch.make_tensor_backend(minitorch.FastOps)
 if numba.cuda.is_available():
@@ -94,6 +96,7 @@ class FastTrain:
             losses.append(total_loss)
             # Logging
             if epoch % 10 == 0 or epoch == max_epochs:
+                end = time.time()
                 X = minitorch.tensor(data.X, backend=self.backend)
                 y = minitorch.tensor(data.y, backend=self.backend)
                 out = self.model.forward(X).view(y.shape[0])
@@ -110,19 +113,21 @@ if __name__ == "__main__":
     parser.add_argument("--HIDDEN", type=int, default=10, help="number of hiddens")
     parser.add_argument("--RATE", type=float, default=0.05, help="learning rate")
     parser.add_argument("--BACKEND", default="cpu", help="backend mode")
-    parser.add_argument("--DATASET", default="simple", help="dataset")
+    parser.add_argument("--DATASET", default="Simple", help="dataset")
     parser.add_argument("--PLOT", default=False, help="dataset")
 
     args = parser.parse_args()
 
     PTS = args.PTS
 
-    if args.DATASET == "xor":
-        data = datasets.xor(PTS)
-    elif args.DATASET == "simple":
-        data = datasets.simple(PTS)
-    elif args.DATASET == "split":
-        data = datasets.split(PTS)
+    # if args.DATASET == "xor":
+    #     data = datasets.xor(PTS)
+    # elif args.DATASET == "simple":
+    #     data = datasets.simple(PTS)
+    # elif args.DATASET == "split":
+    #     data = datasets.split(PTS)
+    
+    data = minitorch.datasets[args.DATASET](PTS)
 
     HIDDEN = int(args.HIDDEN)
     RATE = args.RATE

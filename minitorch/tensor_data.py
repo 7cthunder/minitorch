@@ -51,10 +51,11 @@ def to_index(ordinal, shape, out_index):
     """
     # TODO: Implement for Task 2.1.
     # raise NotImplementedError('Need to implement for Task 2.1')
-    strides = strides_from_shape(shape)
-    for i in range(len(shape)):
-        out_index[i] = ordinal // strides[i]
-        ordinal = ordinal % strides[i]
+    pos = ordinal + 0
+    for i in range(len(shape) - 1, -1, -1):
+        s = shape[i]
+        out_index[i] = (pos % s)
+        pos = pos // s
 
 
 def broadcast_index(big_index, big_shape, shape, out_index):
@@ -76,7 +77,7 @@ def broadcast_index(big_index, big_shape, shape, out_index):
     """
     # TODO: Implement for Task 2.2.
     # raise NotImplementedError('Need to implement for Task 2.2')
-    for i in range(len(shape)):
+    for i in range(1, len(shape)+1):
         out_index[-i] = big_index[-i] if shape[-i] != 1 else 0
 
 
