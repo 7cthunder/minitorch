@@ -133,7 +133,6 @@ def tensor_zip(fn):
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, a_shape, a_index)
             broadcast_index(out_index, out_shape, b_shape, b_index)
-            # print(b_index)
             data_a = a_storage[index_to_position(a_index, a_strides)]
             data_b = b_storage[index_to_position(b_index, b_strides)]
             out[index_to_position(out_index, out_strides)] = fn(data_a, data_b)
@@ -293,11 +292,11 @@ def tensor_matrix_multiply(
 
         a_index = np.zeros_like(a_shape)
         broadcast_index(out_index, out_shape, a_shape, a_index)
-        
+
         b_index = np.zeros_like(b_shape)
         broadcast_index(out_index, out_shape, b_shape, b_index)
 
-        sum_out = 0.
+        sum_out = 0.0
         for k in range(a_shape[-1]):
             a_index[-1] = k
             b_index[-2] = k

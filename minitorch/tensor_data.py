@@ -54,7 +54,7 @@ def to_index(ordinal, shape, out_index):
     pos = ordinal + 0
     for i in range(len(shape) - 1, -1, -1):
         s = shape[i]
-        out_index[i] = (pos % s)
+        out_index[i] = pos % s
         pos = pos // s
 
 
@@ -77,7 +77,7 @@ def broadcast_index(big_index, big_shape, shape, out_index):
     """
     # TODO: Implement for Task 2.2.
     # raise NotImplementedError('Need to implement for Task 2.2')
-    for i in range(1, len(shape)+1):
+    for i in range(1, len(shape) + 1):
         out_index[-i] = big_index[-i] if shape[-i] != 1 else 0
 
 
@@ -109,7 +109,9 @@ def shape_broadcast(shape1, shape2):
             union_shape.append(s1)
             continue
         if min(s1, s2) > 1:
-            raise IndexingError("cannot broadcast between %s and %s" % (str(shape1), str(shape2)))
+            raise IndexingError(
+                "cannot broadcast between %s and %s" % (str(shape1), str(shape2))
+            )
         union_shape.append(max(s1, s2))
     union_shape.reverse()
     return tuple(union_shape)

@@ -126,7 +126,7 @@ if __name__ == "__main__":
     #     data = datasets.simple(PTS)
     # elif args.DATASET == "split":
     #     data = datasets.split(PTS)
-    
+
     data = minitorch.datasets[args.DATASET](PTS)
 
     HIDDEN = int(args.HIDDEN)
