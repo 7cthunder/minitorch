@@ -244,7 +244,7 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
                 # TODO: Implement for Task 2.3.
                 # raise NotImplementedError('Need to implement for Task 2.3')
                 ctx.save_for_backward(order)
-                return a._new(a._tensor.permute(*order)) 
+                return a._new(a._tensor.permute(*order))
 
             @staticmethod
             def backward(ctx, grad_output):

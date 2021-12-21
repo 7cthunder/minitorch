@@ -84,7 +84,7 @@ def tensor_conv1d(
         in_index = np.zeros_like(input_shape)
         wt_index = np.zeros_like(weight_shape)
         in_index[0] = ob
-        wt_index[0] = oc 
+        wt_index[0] = oc
 
         sum_out = 0.
         for i in range(in_channels):
