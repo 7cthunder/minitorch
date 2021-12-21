@@ -144,6 +144,7 @@ class ImageTrain:
                 x.requires_grad_(True)
                 y.requires_grad_(True)
                 # Forward
+                optim.zero_grad()
                 out = model.forward(x.view(BATCH, 1, H, W)).view(BATCH, C)
                 prob = (out * y).sum(1)
                 loss = -(prob / y.shape[0]).sum()

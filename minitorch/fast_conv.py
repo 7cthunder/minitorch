@@ -75,7 +75,33 @@ def tensor_conv1d(
     s2 = weight_strides
 
     # TODO: Implement for Task 4.1.
-    raise NotImplementedError('Need to implement for Task 4.1')
+    # raise NotImplementedError('Need to implement for Task 4.1')
+    for p in prange(out_size):
+        out_index = np.zeros_like(out_shape)
+        to_index(p, out_shape, out_index)
+        ob, oc, op = out_index
+
+        in_index = np.zeros_like(input_shape)
+        wt_index = np.zeros_like(weight_shape)
+        in_index[0] = ob
+        wt_index[0] = oc 
+
+        sum_out = 0.
+        for i in range(in_channels):
+            for j in range(kw):
+                if not reverse:
+                    in_index[1] = wt_index[1] = i
+                    in_index[2] = op + j
+                    wt_index[2] = j
+                    if in_index[2] < width:
+                        sum_out += input[index_to_position(in_index, s1)] * weight[index_to_position(wt_index, s2)]
+                else:
+                    in_index[1] = wt_index[1] = i
+                    in_index[2] = op - j
+                    wt_index[2] = j
+                    if in_index[2] >= 0:
+                        sum_out += input[index_to_position(in_index, s1)] * weight[index_to_position(wt_index, s2)]
+        out[index_to_position(out_index, out_strides)] = sum_out
 
 
 class Conv1dFun(Function):
@@ -199,7 +225,38 @@ def tensor_conv2d(
     s20, s21, s22, s23 = s2[0], s2[1], s2[2], s2[3]
 
     # TODO: Implement for Task 4.2.
-    raise NotImplementedError('Need to implement for Task 4.2')
+    # raise NotImplementedError('Need to implement for Task 4.2')
+    for p in prange(out_size):
+        out_index = np.zeros_like(out_shape)
+        to_index(p, out_shape, out_index)
+        ob, oc, oh, ow = out_index
+
+        in_index = np.zeros_like(input_shape)
+        wt_index = np.zeros_like(weight_shape)
+        in_index[0] = ob
+        wt_index[0] = oc
+
+        sum_out = 0.
+        for i in range(in_channels):
+            for j in range(kh):
+                for k in range(kw):
+                    if not reverse:
+                        in_index[1] = wt_index[1] = i
+                        wt_index[2] = j
+                        wt_index[3] = k
+                        in_index[2] = oh + j
+                        in_index[3] = ow + k
+                        if in_index[2] < height and in_index[3] < width:
+                            sum_out += input[index_to_position(in_index, s1)] * weight[index_to_position(wt_index, s2)]
+                    else:
+                        in_index[1] = wt_index[1] = i
+                        wt_index[2] = j
+                        wt_index[3] = k
+                        in_index[2] = oh - j
+                        in_index[3] = ow - k
+                        if in_index[2] >= 0 and in_index[3] >= 0:
+                            sum_out += input[index_to_position(in_index, s1)] * weight[index_to_position(wt_index, s2)]
+        out[index_to_position(out_index, out_strides)] = sum_out
 
 
 class Conv2dFun(Function):

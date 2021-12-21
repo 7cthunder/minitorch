@@ -169,6 +169,7 @@ class SentenceSentimentTrain:
                 x.requires_grad_(True)
                 y.requires_grad_(True)
                 # Forward
+                optim.zero_grad()
                 out = model.forward(x)
                 prob = (out * y) + (out - 1.0) * (y - 1.0)
                 loss = -(prob.log() / y.shape[0]).sum()

@@ -177,7 +177,7 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
         class Sum(Function):
             @staticmethod
             def forward(ctx, a, dim):
-                ctx.save_for_backward(a.shape, dim)
+                ctx.save_for_backward(a, dim)
                 if dim is not None:
                     return add_reduce(a, dim)
                 else:
@@ -187,13 +187,13 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
 
             @staticmethod
             def backward(ctx, grad_output):
-                a_shape, dim = ctx.saved_values
+                a, dim = ctx.saved_values
                 if dim is None:
-                    out = grad_output.zeros(a_shape)
+                    out = grad_output.zeros(a.shape)
                     out._tensor._storage[:] = grad_output[0]
                     return out
                 else:
-                    return grad_output
+                    return a.expand(grad_output)
 
         class All(Function):
             @staticmethod
@@ -244,18 +244,15 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
                 # TODO: Implement for Task 2.3.
                 # raise NotImplementedError('Need to implement for Task 2.3')
                 ctx.save_for_backward(order)
-                out = a.get_data()
-                out._tensor.permute(*order)
-                return out
+                return a._new(a._tensor.permute(*order)) 
 
             @staticmethod
             def backward(ctx, grad_output):
                 # TODO: Implement for Task 2.4.
                 # raise NotImplementedError('Need to implement for Task 2.4')
                 order = ctx.saved_values
-                out = grad_output.get_data()
-                out._tensor.permute(*reversed(order))
-                return out
+                order = [a[0] for a in sorted(enumerate(order), key=lambda a : a[1])]
+                return grad_output._new(grad_output._tensor.permute(*order))
 
         class View(Function):
             @staticmethod

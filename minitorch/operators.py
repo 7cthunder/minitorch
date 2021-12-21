@@ -115,7 +115,7 @@ EPS = 1e-6
 
 def log(x):
     ":math:`f(x) = log(x)`"
-    return math.log(x + EPS)
+    return math.log(x + EPS) if x == 0 else math.log(x)
 
 
 def exp(x):
@@ -127,7 +127,7 @@ def log_back(x, d):
     r"If :math:`f = log` as above, compute :math:`d \times f'(x)`"
     # TODO: Implement for Task 0.1.
     # raise NotImplementedError('Need to implement for Task 0.1')
-    return d / (x + EPS)
+    return d / (x + EPS) if x == 0 else d / x
 
 
 def inv(x):
