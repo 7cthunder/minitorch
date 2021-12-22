@@ -98,7 +98,7 @@ def tensor_conv1d(
                 else:
                     in_index[1] = wt_index[1] = i
                     in_index[2] = op - j
-                    wt_index[2] = j
+                    wt_index[2] = kw - j - 1
                     if in_index[2] >= 0:
                         sum_out += input[index_to_position(in_index, s1)] * weight[index_to_position(wt_index, s2)]
         out[index_to_position(out_index, out_strides)] = sum_out
@@ -250,8 +250,8 @@ def tensor_conv2d(
                             sum_out += input[index_to_position(in_index, s1)] * weight[index_to_position(wt_index, s2)]
                     else:
                         in_index[1] = wt_index[1] = i
-                        wt_index[2] = j
-                        wt_index[3] = k
+                        wt_index[2] = kh - j - 1
+                        wt_index[3] = kw - k - 1
                         in_index[2] = oh - j
                         in_index[3] = ow - k
                         if in_index[2] >= 0 and in_index[3] >= 0:

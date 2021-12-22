@@ -133,11 +133,8 @@ def logsoftmax(input, dim):
     """
     # TODO: Implement for Task 4.4.
     # raise NotImplementedError('Need to implement for Task 4.4')
-    # return input - input.exp().sum(dim).log()
-    t = input.exp()
-    t = t.sum(dim)
-    t = t.log()
-    return input - t
+    m = max(input, dim)
+    return input - (input - m).exp().sum(dim).log() - m
 
 
 def maxpool2d(input, kernel):
