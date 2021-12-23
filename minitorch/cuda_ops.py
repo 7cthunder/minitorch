@@ -424,7 +424,6 @@ def tensor_matrix_multiply(
     x, y, z = cuda.grid(3)
     tx = cuda.threadIdx.x
     ty = cuda.threadIdx.y
-    bpg = cuda.gridDim.x
 
     if x >= out_shape[1] and y >= out_shape[2]:
         return
@@ -439,7 +438,7 @@ def tensor_matrix_multiply(
     broadcast_index(out_index, out_shape, b_shape, b_index)
 
     tmp = 0.0
-    for i in range(bpg):
+    for i in range((a_shape[2] + (BLOCK_DIM - 1)) // BLOCK_DIM):
         # Preload data into shared memory
         a_index[2] = ty + i * BLOCK_DIM
         b_index[1] = tx + i * BLOCK_DIM
