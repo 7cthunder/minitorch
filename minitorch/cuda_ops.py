@@ -116,7 +116,7 @@ def tensor_zip(fn):
             out_index = cuda.local.array(MAX_DIMS, dtype=numba.int32)
             a_index = cuda.local.array(MAX_DIMS, dtype=numba.int32)
             b_index = cuda.local.array(MAX_DIMS, dtype=numba.int32)
-            
+
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, a_shape, a_index)
             broadcast_index(out_index, out_shape, b_shape, b_index)
@@ -178,7 +178,7 @@ def _sum_practice(out, a, size):
 
     # wait until all threads finish preloading
     cuda.syncthreads()
-    
+
     if tx == 0:
         for j in range(BLOCK_DIM):
             if bx * BLOCK_DIM + j < size:
@@ -337,20 +337,20 @@ def _mm_practice(out, a, b, size):
     # raise NotImplementedError('Need to implement for Task 3.4')
     sa = cuda.shared.array((BLOCK_DIM, BLOCK_DIM), dtype=numba.float64)
     sb = cuda.shared.array((BLOCK_DIM, BLOCK_DIM), dtype=numba.float64)
-    
+
     i = cuda.threadIdx.x
     j = cuda.threadIdx.y
 
     if i >= size or j >= size:
         return
-    
+
     p = i * size + j
     sa[i, j] = a[p]
     sb[i, j] = b[p]
 
     cuda.syncthreads()
 
-    tmp = 0.
+    tmp = 0.0
     for k in range(size):
         tmp += sa[i, k] * sb[k, j]
     out[p] = tmp
@@ -438,13 +438,21 @@ def tensor_matrix_multiply(
     broadcast_index(out_index, out_shape, a_shape, a_index)
     broadcast_index(out_index, out_shape, b_shape, b_index)
 
-    tmp = 0.
+    tmp = 0.0
     for i in range(bpg):
         # Preload data into shared memory
         a_index[2] = ty + i * BLOCK_DIM
         b_index[1] = tx + i * BLOCK_DIM
-        sa[tx, ty] = a_storage[index_to_position(a_index, a_strides)] if a_index[2] < a_shape[2] else 0.
-        sb[tx, ty] = b_storage[index_to_position(b_index, b_strides)] if b_index[1] < b_shape[1] else 0. 
+        sa[tx, ty] = (
+            a_storage[index_to_position(a_index, a_strides)]
+            if a_index[2] < a_shape[2]
+            else 0.0
+        )
+        sb[tx, ty] = (
+            b_storage[index_to_position(b_index, b_strides)]
+            if b_index[1] < b_shape[1]
+            else 0.0
+        )
 
         # Wait until all threads finish preloading
         cuda.syncthreads()
@@ -455,7 +463,7 @@ def tensor_matrix_multiply(
 
         # Wait until all threads finish computing
         cuda.syncthreads()
-    
+
     if x < out_shape[1] and y < out_shape[2]:
         out[index_to_position(out_index, out_strides)] = tmp
 
