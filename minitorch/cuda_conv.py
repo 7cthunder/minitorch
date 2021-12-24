@@ -92,7 +92,7 @@ def tensor_conv1d(
     wt_index = cuda.local.array(MAX_DIMS, dtype=numba.int32)
     wt_index[0] = y
 
-    tmp = 0.
+    tmp = 0.0
     for i in range(in_channels):
         wt_index[1] = i
         in_index[1] = i
@@ -112,7 +112,7 @@ def tensor_conv1d(
                     in_index[2] = x + j
                     val = input[index_to_position(in_index, s1)]
                 else:
-                    val = 0.
+                    val = 0.0
                 wt_index[2] = j
             else:
                 # this input cell has preloaded into shared input array -- si
@@ -122,7 +122,7 @@ def tensor_conv1d(
                     in_index[2] = x - j
                     val = input[index_to_position(in_index, s1)]
                 else:
-                    val = 0.
+                    val = 0.0
                 wt_index[2] = kw - j - 1
             tmp += weight[index_to_position(wt_index, s2)] * val
 
@@ -130,7 +130,7 @@ def tensor_conv1d(
 
     if x < out_width:
         out[index_to_position(out_index, out_strides)] = tmp
-    
+
 
 class Conv1dFun(Function):
     @staticmethod
@@ -157,7 +157,7 @@ class Conv1dFun(Function):
         blockspergrid = (
             (w + (THREADS_PER_BLOCK - 1)) // THREADS_PER_BLOCK,
             out_channels,
-            batch
+            batch,
         )
         threadsperblock = (THREADS_PER_BLOCK, 1, 1)
 
@@ -174,11 +174,11 @@ class Conv1dFun(Function):
         grad_weight = grad_output.zeros((in_channels, out_channels, kw))
         new_input = input.permute(1, 0, 2)
         new_grad_output = grad_output.permute(1, 0, 2)
-        
+
         blockspergrid = (
             (kw + (THREADS_PER_BLOCK - 1)) // THREADS_PER_BLOCK,
             out_channels,
-            in_channels
+            in_channels,
         )
         threadsperblock = (THREADS_PER_BLOCK, 1, 1)
 
@@ -196,7 +196,7 @@ class Conv1dFun(Function):
         blockspergrid = (
             (w + (THREADS_PER_BLOCK - 1)) // THREADS_PER_BLOCK,
             in_channels,
-            batch
+            batch,
         )
         threadsperblock = (THREADS_PER_BLOCK, 1, 1)
 
@@ -281,8 +281,8 @@ def tensor_conv2d(
     out_index = cuda.local.array(MAX_DIMS, dtype=numba.int32)
     out_index[0] = int(z / out_channels)  # current batch
     out_index[1] = int(z % out_channels)  # current output channel
-    out_index[2] = x                      # current pos in height
-    out_index[3] = y                      # current pos in width
+    out_index[2] = x  # current pos in height
+    out_index[3] = y  # current pos in width
 
     in_index = cuda.local.array(MAX_DIMS, dtype=numba.int32)
     in_index[0] = out_index[0]
@@ -290,7 +290,7 @@ def tensor_conv2d(
     wt_index = cuda.local.array(MAX_DIMS, dtype=numba.int32)
     wt_index[0] = out_index[1]
 
-    tmp = 0.
+    tmp = 0.0
     for i in range(in_channels):
         wt_index[1] = i
         in_index[1] = i
@@ -313,7 +313,7 @@ def tensor_conv2d(
                         in_index[3] = y + k
                         val = input[index_to_position(in_index, s1)]
                     else:
-                        val = 0.
+                        val = 0.0
                     wt_index[2] = j
                     wt_index[3] = k
                 else:
@@ -325,7 +325,7 @@ def tensor_conv2d(
                         in_index[3] = y - k
                         val = input[index_to_position(in_index, s1)]
                     else:
-                        val = 0.
+                        val = 0.0
                     wt_index[2] = kh - j - 1
                     wt_index[3] = kw - k - 1
                 tmp += weight[index_to_position(wt_index, s2)] * val
@@ -359,7 +359,7 @@ class Conv2dFun(Function):
         blockspergrid = (
             (h + (THREADS_PER_BLOCK - 1)) // THREADS_PER_BLOCK,
             (w + (THREADS_PER_BLOCK - 1)) // THREADS_PER_BLOCK,
-            int(batch * out_channels)
+            int(batch * out_channels),
         )
         threadsperblock = (THREADS_PER_BLOCK, THREADS_PER_BLOCK, 1)
 
@@ -381,7 +381,7 @@ class Conv2dFun(Function):
         blockspergrid = (
             (kh + (THREADS_PER_BLOCK - 1)) // THREADS_PER_BLOCK,
             (kw + (THREADS_PER_BLOCK - 1)) // THREADS_PER_BLOCK,
-            in_channels * out_channels
+            in_channels * out_channels,
         )
         threadsperblock = (THREADS_PER_BLOCK, THREADS_PER_BLOCK, 1)
 
@@ -399,7 +399,7 @@ class Conv2dFun(Function):
         blockspergrid = (
             (h + (THREADS_PER_BLOCK - 1)) // THREADS_PER_BLOCK,
             (w + (THREADS_PER_BLOCK - 1)) // THREADS_PER_BLOCK,
-            int(batch * out_channels)
+            int(batch * out_channels),
         )
         threadsperblock = (THREADS_PER_BLOCK, THREADS_PER_BLOCK, 1)
 
